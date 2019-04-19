@@ -61,12 +61,14 @@ var (
 	allowPorts        string
 	maxPoolCount      int64
 	maxPortsPerClient int64
+	authAddr          string
 )
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "", "c", "", "config file of frps")
 	rootCmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "version of frpc")
 
+	rootCmd.PersistentFlags().StringVarP(&authAddr, "auth_addr", "", ":10080", "bind auth address")
 	rootCmd.PersistentFlags().StringVarP(&bindAddr, "bind_addr", "", "0.0.0.0", "bind address")
 	rootCmd.PersistentFlags().IntVarP(&bindPort, "bind_port", "p", 7000, "bind port")
 	rootCmd.PersistentFlags().IntVarP(&bindUdpPort, "bind_udp_port", "", 0, "bind udp port")
@@ -107,6 +109,8 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+
+		go startAuthServer()
 
 		err = runServer()
 		if err != nil {
