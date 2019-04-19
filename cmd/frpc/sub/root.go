@@ -42,6 +42,7 @@ const (
 var (
 	cfgFile     string
 	showVersion bool
+	authKey     string
 
 	serverAddr string
 	user       string
@@ -74,6 +75,7 @@ var (
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "./frpc.ini", "config file of frpc")
+	rootCmd.PersistentFlags().StringVarP(&authKey, "authKey", "s", "", "auth token")
 	rootCmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "version of frpc")
 
 	kcpDoneCh = make(chan struct{})
@@ -86,6 +88,10 @@ var rootCmd = &cobra.Command{
 		if showVersion {
 			fmt.Println(version.Full())
 			return nil
+		}
+
+		if authKey != "" {
+			startByRemoteCfg()
 		}
 
 		// Do not show command usage here.
