@@ -76,6 +76,8 @@ type ServerCommonConf struct {
 	MaxPortsPerClient int64 `json:"max_ports_per_client"`
 	HeartBeatTimeout  int64 `json:"heart_beat_timeout"`
 	UserConnTimeout   int64 `json:"user_conn_timeout"`
+
+	HookCheckUser string `json:"hook_check_user"`
 }
 
 func GetDefaultServerConf() *ServerCommonConf {
@@ -128,6 +130,10 @@ func UnmarshalServerConfFromIni(defaultCfg *ServerCommonConf, content string) (c
 	)
 	if tmpStr, ok = conf.Get("common", "bind_addr"); ok {
 		cfg.BindAddr = tmpStr
+	}
+
+	if tmpStr, ok = conf.Get("common", "hook_check_user"); ok {
+		cfg.HookCheckUser = tmpStr
 	}
 
 	if tmpStr, ok = conf.Get("common", "bind_port"); ok {

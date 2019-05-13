@@ -28,6 +28,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/fatedier/frp/server/hook"
+
 	"github.com/fatedier/frp/assets"
 	"github.com/fatedier/frp/g"
 	"github.com/fatedier/frp/models/msg"
@@ -366,6 +368,11 @@ func (svr *Service) RegisterControl(ctlConn frpNet.Conn, loginMsg *msg.Login) (e
 	if util.GetAuthKey(g.GlbServerCfg.Token, loginMsg.Timestamp) != loginMsg.PrivilegeKey {
 		err = fmt.Errorf("authorization failed")
 		return
+	}
+
+	// Check user
+	if err := hook.CheckUser(loginMsg.User); err != nil {
+		return err
 	}
 
 	// If client's RunId is empty, it's a new client, we just create a new controller.
