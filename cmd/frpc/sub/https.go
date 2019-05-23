@@ -42,7 +42,7 @@ func init() {
 	httpsCmd.PersistentFlags().BoolVarP(&useEncryption, "ue", "", false, "use encryption")
 	httpsCmd.PersistentFlags().BoolVarP(&useCompression, "uc", "", false, "use compression")
 
-	rootCmd.AddCommand(httpsCmd)
+	// rootCmd.AddCommand(httpsCmd)
 }
 
 var httpsCmd = &cobra.Command{

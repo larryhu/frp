@@ -44,7 +44,7 @@ func init() {
 	stcpCmd.PersistentFlags().BoolVarP(&useEncryption, "ue", "", false, "use encryption")
 	stcpCmd.PersistentFlags().BoolVarP(&useCompression, "uc", "", false, "use compression")
 
-	rootCmd.AddCommand(stcpCmd)
+	// rootCmd.AddCommand(stcpCmd)
 }
 
 var stcpCmd = &cobra.Command{

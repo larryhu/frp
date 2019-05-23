@@ -46,7 +46,7 @@ func init() {
 	httpCmd.PersistentFlags().BoolVarP(&useEncryption, "ue", "", false, "use encryption")
 	httpCmd.PersistentFlags().BoolVarP(&useCompression, "uc", "", false, "use compression")
 
-	rootCmd.AddCommand(httpCmd)
+	// rootCmd.AddCommand(httpCmd)
 }
 
 var httpCmd = &cobra.Command{
