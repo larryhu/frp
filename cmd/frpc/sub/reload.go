@@ -29,7 +29,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(reloadCmd)
+	// rootCmd.AddCommand(reloadCmd)
 }
 
 var reloadCmd = &cobra.Command{

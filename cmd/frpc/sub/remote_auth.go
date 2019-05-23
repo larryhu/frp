@@ -3,22 +3,20 @@ package sub
 import (
 	"encoding/base64"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"path/filepath"
 	"time"
 
 	"github.com/fatedier/frp/utils/util"
-
 	"gopkg.in/ini.v1"
 )
 
 // reqAuthByKey 请求服务端配置
-func reqAuthByKey() ([]byte, string) {
+func reqAuthByKey() ([]byte, string, error) {
 	bytesURL, err := base64.RawURLEncoding.DecodeString(authKey)
 	if err != nil {
-		panic(err)
+		return nil, "", err
 	}
 	client := &http.Client{
 		Timeout: time.Second * 5,
@@ -27,28 +25,35 @@ func reqAuthByKey() ([]byte, string) {
 
 	u, err := url.Parse(strURL)
 	if err != nil {
-		panic(err)
+		return nil, "", err
 	}
 
 	res, err := client.Get(strURL)
 	if err != nil {
-		panic(err)
+		return nil, "", err
 	}
 	confData, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		panic(err)
+		return nil, "", err
 	}
 
-	return confData, filepath.Base(u.Path)
+	return confData, filepath.Base(u.Path), nil
 }
 
-// startByRemoteCfg 根据服务端配置启动服务
-func startByRemoteCfg() {
-	confData, key := reqAuthByKey()
-	confData = util.AESCFBDecrypter(key, confData)
+// fetchRemoteCfg 根据服务端配置启动服务
+func fetchRemoteCfg() (string, error) {
+	confData, key, err := reqAuthByKey()
+	if err != nil {
+		return "", err
+	}
+
+	confData, err = util.AESCFBDecrypter(key, confData)
+	if err != nil {
+		return "", err
+	}
 	f, err := ini.Load(confData)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	for _, s := range f.Sections() {
 		if s.Name() == "common" {
@@ -59,12 +64,9 @@ func startByRemoteCfg() {
 	}
 	fw, err := ioutil.TempFile("", "config")
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	f.WriteTo(fw)
 	fw.Close()
-	log.Printf("write temp config file %s", fw.Name())
-	if err := runClient(fw.Name()); err != nil {
-		panic(err)
-	}
+	return fw.Name(), nil
 }

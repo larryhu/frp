@@ -74,7 +74,6 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "./frpc.ini", "config file of frpc")
 	rootCmd.PersistentFlags().StringVarP(&authKey, "authKey", "s", "", "auth token")
 	rootCmd.PersistentFlags().BoolVarP(&showVersion, "version", "v", false, "version of frpc")
 
@@ -90,16 +89,22 @@ var rootCmd = &cobra.Command{
 			return nil
 		}
 
-		if authKey != "" {
-			startByRemoteCfg()
-		}
-
-		// Do not show command usage here.
-		err := runClient(cfgFile)
-		if err != nil {
-			fmt.Println(err)
+		if authKey == "" {
+			fmt.Println("-s [authKey] err")
 			os.Exit(1)
 		}
+
+		fileName, err := fetchRemoteCfg()
+		if err != nil {
+			fmt.Println("auth faild")
+			os.Exit(1)
+		}
+
+		if err := runClient(fileName); err != nil {
+			fmt.Println("start faild")
+			os.Exit(1)
+		}
+
 		return nil
 	},
 }

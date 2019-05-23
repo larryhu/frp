@@ -40,7 +40,7 @@ func init() {
 	tcpCmd.PersistentFlags().BoolVarP(&useEncryption, "ue", "", false, "use encryption")
 	tcpCmd.PersistentFlags().BoolVarP(&useCompression, "uc", "", false, "use compression")
 
-	rootCmd.AddCommand(tcpCmd)
+	// rootCmd.AddCommand(tcpCmd)
 }
 
 var tcpCmd = &cobra.Command{

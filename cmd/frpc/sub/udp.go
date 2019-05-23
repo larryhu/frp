@@ -40,7 +40,7 @@ func init() {
 	udpCmd.PersistentFlags().BoolVarP(&useEncryption, "ue", "", false, "use encryption")
 	udpCmd.PersistentFlags().BoolVarP(&useCompression, "uc", "", false, "use compression")
 
-	rootCmd.AddCommand(udpCmd)
+	// rootCmd.AddCommand(udpCmd)
 }
 
 var udpCmd = &cobra.Command{

@@ -44,7 +44,7 @@ func init() {
 	xtcpCmd.PersistentFlags().BoolVarP(&useEncryption, "ue", "", false, "use encryption")
 	xtcpCmd.PersistentFlags().BoolVarP(&useCompression, "uc", "", false, "use compression")
 
-	rootCmd.AddCommand(xtcpCmd)
+	// rootCmd.AddCommand(xtcpCmd)
 }
 
 var xtcpCmd = &cobra.Command{
