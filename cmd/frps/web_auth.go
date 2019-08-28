@@ -20,28 +20,31 @@ func init() {
 }
 
 func authKey(w http.ResponseWriter, r *http.Request) {
-	key := mux.Vars(r)["key"]
-	if len(key) != 32 {
+	vars := mux.Vars(r)
+	if vars == nil {
 		w.WriteHeader(400)
 		return
 	}
 
+	key := vars["key"]
+
 	fr, err := os.Open(filepath.Join("keys", key))
 	if err != nil {
-		w.WriteHeader(400)
+		w.WriteHeader(404)
 		return
 	}
 	defer fr.Close()
 
 	configData, err := ioutil.ReadAll(fr)
 	if err != nil {
-		w.WriteHeader(400)
+		w.WriteHeader(404)
 		return
 	}
 
 	encryptData, err := util.AESCFBEncrypter(key, configData)
 	if err != nil {
-		w.WriteHeader(400)
+		println(err.Error())
+		w.WriteHeader(417)
 		return
 	}
 

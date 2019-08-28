@@ -11,7 +11,11 @@ import (
 
 //AESCFBDecrypter AES CFB 解密
 func AESCFBDecrypter(key string, ciphertext []byte) ([]byte, error) {
-	keyBytes, _ := hex.DecodeString(key)
+	keyBytes, err := hex.DecodeString(key)
+	if err != nil {
+		keyBytes = make([]byte, 32)
+		copy(keyBytes, []byte(key))
+	}
 
 	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
@@ -35,7 +39,11 @@ func AESCFBDecrypter(key string, ciphertext []byte) ([]byte, error) {
 
 //AESCFBEncrypter AES CFB 加密
 func AESCFBEncrypter(key string, plaintext []byte) ([]byte, error) {
-	keyBytes, _ := hex.DecodeString(key)
+	keyBytes, err := hex.DecodeString(key)
+	if err != nil {
+		keyBytes = make([]byte, 32)
+		copy(keyBytes, []byte(key))
+	}
 
 	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
