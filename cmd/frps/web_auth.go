@@ -2,40 +2,70 @@ package main
 
 import (
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/fatedier/frp/utils/util"
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 )
 
-func authKey(c *gin.Context) {
-	key := c.Param("key")
+var (
+	authAddr string
+)
+
+func init() {
+	rootCmd.PersistentFlags().StringVarP(&authAddr, "auth_addr", "", "", "bind auth address :10080")
+}
+
+func authKey(w http.ResponseWriter, r *http.Request) {
+	key := mux.Vars(r)["key"]
 	if len(key) != 32 {
-		c.Status(400)
+		w.WriteHeader(400)
 		return
 	}
 
 	fr, err := os.Open(filepath.Join("keys", key))
 	if err != nil {
-		c.Status(400)
+		w.WriteHeader(400)
 		return
 	}
+	defer fr.Close()
 
 	configData, err := ioutil.ReadAll(fr)
 	if err != nil {
-		c.Status(400)
+		w.WriteHeader(400)
 		return
 	}
-	c.Data(200, "application/octet-stream", util.AESCFBEncrypter(key, configData))
+
+	encryptData, err := util.AESCFBEncrypter(key, configData)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	w.WriteHeader(200)
+
+	w.Header().Add("Content-Type", "application/octet-stream")
+	w.Write(encryptData)
 }
 
 // 启动验证服务
 func startAuthServer() {
-	w := gin.Default()
-	w.GET("/auth/key/:key", authKey)
-
-	if err := w.Run(authAddr); err != nil {
-		panic(err)
+	if authAddr == "" {
+		return
 	}
+
+	router := mux.NewRouter()
+	router.HandleFunc("/auth/key/{key}", authKey).Methods("GET")
+
+	srv := &http.Server{
+		Handler:      router,
+		Addr:         authAddr,
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
+	}
+
+	panic(srv.ListenAndServe())
 }
