@@ -111,6 +111,8 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
+		go startAuthServer()
+
 		err = runServer()
 		if err != nil {
 			fmt.Println(err)
