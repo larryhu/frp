@@ -1,7 +1,6 @@
 package sub
 
 import (
-	"bytes"
 	"encoding/base64"
 	"io/ioutil"
 	"net/http"
@@ -10,7 +9,7 @@ import (
 	"time"
 
 	"github.com/fatedier/frp/utils/util"
-	ini "github.com/vaughan0/go-ini"
+	"gopkg.in/ini.v1"
 )
 
 // reqAuthByKey 请求服务端配置
@@ -52,9 +51,14 @@ func fetchRemoteCfg() (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	if _, err := ini.Load(bytes.NewBuffer(confData)); err != nil {
+	f, err := ini.Load(confData)
+	if err != nil {
 		return "", err
+	}
+
+	common := f.Section("common")
+	if !common.HasKey("user") {
+		common.NewKey("user", key)
 	}
 
 	fw, err := ioutil.TempFile("", "config")
@@ -63,7 +67,7 @@ func fetchRemoteCfg() (string, error) {
 	}
 	defer fw.Close()
 
-	fw.Write(confData)
+	f.WriteTo(fw)
 
 	return fw.Name(), nil
 }

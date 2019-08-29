@@ -28,4 +28,5 @@ require (
 	github.com/tjfoc/gmsm v0.0.0-20171124023159-98aa888b79d8 // indirect
 	github.com/vaughan0/go-ini v0.0.0-20130923145212-a98ad7ee00ec
 	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
+	gopkg.in/ini.v1 v1.46.0
 )

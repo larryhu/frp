@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/fatedier/frp/utils/log"
 	"github.com/fatedier/frp/utils/util"
 	"github.com/gorilla/mux"
 )
@@ -69,6 +70,8 @@ func startAuthServer() {
 		WriteTimeout: 10 * time.Second,
 		ReadTimeout:  10 * time.Second,
 	}
+
+	log.Info("web auth server at %s", authAddr)
 
 	panic(srv.ListenAndServe())
 }
