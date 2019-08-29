@@ -28,5 +28,6 @@ require (
 	github.com/templexxx/xor v0.0.0-20170926022130-0af8e873c554 // indirect
 	github.com/tjfoc/gmsm v0.0.0-20171124023159-98aa888b79d8 // indirect
 	github.com/vaughan0/go-ini v0.0.0-20130923145212-a98ad7ee00ec
-	golang.org/x/net v0.0.0-20190311183353-d8887717615a
+	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
+	gopkg.in/ini.v1 v1.46.0
 )
